@@ -1,0 +1,54 @@
+name: Terraform Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment (dev, staging, prod)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      tf_action:
+        description: 'Terraform action (init, plan, apply)'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - init
+          - plan
+          - apply
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Select environment directory
+        id: select-env
+        run: |
+          echo "ENV_DIR=environments/${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+          echo "TFVARS_FILE=${{ github.event.inputs.environment }}.tfvars" >> $GITHUB_ENV
+
+      - name: Terraform Init
+        if: ${{ github.event.inputs.tf_action == 'init' }}
+        run: terraform -chdir=$ENV_DIR init
+
+      - name: Terraform Plan
+        if: ${{ github.event.inputs.tf_action == 'plan' }}
+        run: terraform -chdir=$ENV_DIR plan -var-file=${TFVARS_FILE}
+
+      - name: Terraform Apply
+        if: ${{ github.event.inputs.tf_action == 'apply' }}
+        run: terraform -chdir=$ENV_DIR apply -auto-approve -var-file=${TFVARS_FILE}
