@@ -1,7 +1,10 @@
-ami_id      = "ami-0c55b159cbfafe1f0" # Example AMI ID, replace with a valid one for your region
-subnet_id   = "subnet-xxxxxxxx"         # Replace with your subnet ID
-instance_type = "t2.micro"
+ami_id            = "ami-05572e392e80aee89"
+vpc_cidr          = "10.2.0.0/16"          # Different VPC CIDR for prod
+subnet_cidr       = "10.2.1.0/24"          # Different subnet CIDR for prod
+availability_zone = "us-west-2a"
+instance_type     = "t2.micro"
+
 tags = {
-  Name = "prod-ec2-instance"
+  Name        = "prod-ec2-instance"
   Environment = "prod"
 }
