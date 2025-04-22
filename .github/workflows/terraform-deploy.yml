@@ -61,3 +61,5 @@ jobs:
       - name: Terraform Destroy
         if: ${{ github.event.inputs.tf_action == 'destroy' }}
         run: terraform -chdir=$ENV_DIR destroy -auto-approve -var-file=${TFVARS_FILE}
+
+        
