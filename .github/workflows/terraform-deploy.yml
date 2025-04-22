@@ -26,7 +26,7 @@ on:
 # This workflow depends on the terraform-prereq workflow to ensure backend resources exist
 jobs:
   prereq:
-    uses: ./.github/workflows/terraform-prereq.yml@main
+    uses: ./.github/workflows/terraform-prereq.yml
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
