@@ -18,11 +18,11 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
     steps:
-      - name: Install AWS CLI v2 (official installer)
+      - name: Install/Update AWS CLI v2 (official installer)
         run: |
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
+          unzip -q awscliv2.zip
+          sudo ./aws/install --update
           aws --version
 
       - name: Create S3 bucket for Terraform state (ignore if exists)
