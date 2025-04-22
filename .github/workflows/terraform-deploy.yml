@@ -13,7 +13,7 @@ on:
           - staging
           - prod
       tf_action:
-        description: 'Terraform action (init, plan, apply)'
+        description: 'Terraform action (init, plan, apply, destroy)'
         required: true
         default: 'plan'
         type: choice
@@ -21,6 +21,7 @@ on:
           - init
           - plan
           - apply
+          - destroy
 
 jobs:
   terraform:
@@ -41,7 +42,11 @@ jobs:
           echo "ENV_DIR=environments/${{ github.event.inputs.environment }}" >> $GITHUB_ENV
           echo "TFVARS_FILE=${{ github.event.inputs.environment }}.tfvars" >> $GITHUB_ENV
 
-      - name: Terraform Init
+      - name: Terraform Init (always before plan/apply/destroy)
+        if: ${{ github.event.inputs.tf_action != 'init' }}
+        run: terraform -chdir=$ENV_DIR init
+
+      - name: Terraform Init (manual)
         if: ${{ github.event.inputs.tf_action == 'init' }}
         run: terraform -chdir=$ENV_DIR init
 
@@ -52,3 +57,7 @@ jobs:
       - name: Terraform Apply
         if: ${{ github.event.inputs.tf_action == 'apply' }}
         run: terraform -chdir=$ENV_DIR apply -auto-approve -var-file=${TFVARS_FILE}
+
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.tf_action == 'destroy' }}
+        run: terraform -chdir=$ENV_DIR destroy -auto-approve -var-file=${TFVARS_FILE}
